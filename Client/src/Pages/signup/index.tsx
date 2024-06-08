@@ -10,10 +10,10 @@ import {
 import { Icons } from "@/components/ui/icons";
 import { Input } from "@/components/ui/input";
 import { useUserAuth } from "@/context/userauthContext";
-// import image1 from "@/assets/images/image1.jpg";
-// import image2 from "@/assets/images/image2.jpg";
-// import image3 from "@/assets/images/image3.jpg";
-// import image4 from "@/assets/images/image4.jpg";
+import image1 from "@/assets/images/image1.jpg";
+import image2 from "@/assets/images/image2.jpg";
+import image3 from "@/assets/images/image3.jpg";
+import image4 from "@/assets/images/image4.jpg";
 import { UserSignIn } from "@/types";
 import { Label } from "@radix-ui/react-label";
 import * as React from "react";
@@ -54,7 +54,7 @@ const Signup: React.FunctionComponent<ISignupProps> = () => {
     <div className="bg-slate-800 w-full h-screen">
       <div className="container mx-auto p-6 flex h-full">
         <div className="flex justify-center items-center w-full">
-          {/* <div className="p-6 w-2/3 hidden lg:block">
+          <div className="p-6 w-2/3 hidden lg:block">
             <div className="grid grid-cols-2 gap-2">
               <img
                 className=" w-2/3 h-auto aspect-video rounded-3xl place-self-end"
@@ -73,7 +73,7 @@ const Signup: React.FunctionComponent<ISignupProps> = () => {
                 src={image3}
               />
             </div>
-          </div> */}
+          </div>
           <div className="max-w-sm rounded-xl border bg-card text-card-foreground shadow-sm">
             <Card>
               <form onSubmit={handleSubmit}>
@@ -107,7 +107,7 @@ const Signup: React.FunctionComponent<ISignupProps> = () => {
                     <Input
                       id="email"
                       type="email"
-                      placeholder="dipesh@example.com"
+                      placeholder="abhyuday@example.com"
                       value={userInfo.email}
                       onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                         setUserInfo({ ...userInfo, email: e.target.value })
