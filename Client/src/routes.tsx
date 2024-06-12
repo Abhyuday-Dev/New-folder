@@ -8,6 +8,7 @@ import Post from "./Pages/Post";
 import MyPhotos from "./Pages/myPhotos";
 import ProtectedRoutes from "./components/ProtectedRoute";
 
+
 export const router = createBrowserRouter([
   {
     element: <ProtectedRoutes />,
