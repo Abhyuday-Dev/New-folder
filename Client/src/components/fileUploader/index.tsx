@@ -1,10 +1,10 @@
-import { useState, useRef, useEffect, useCallback } from "react";
-import * as LR from "@uploadcare/blocks";
+import { useState, useRef, useCallback } from "react";
 import { OutputFileEntry } from "@uploadcare/blocks";
-import blocksStyles from "@uploadcare/blocks/web/lr-file-uploader-regular.min.css?url";
 import { FileEntry } from "@/types";
+import { FileUploaderRegular, type UploadCtxProvider } from '@uploadcare/react-uploader';
+import '@uploadcare/react-uploader/core.css';
 
-LR.registerBlocks(LR);
+
 
 interface IFileUploaderProps {
   fileEntry: FileEntry;
@@ -15,10 +15,8 @@ const FileUploader: React.FunctionComponent<IFileUploaderProps> = ({
   fileEntry,
   onChange,
 }) => {
-  const [uploadedFiles, setUploadedFiles] = useState<OutputFileEntry[]>([]);
-  const ctxProviderRef = useRef<
-    typeof LR.UploadCtxProvider.prototype & LR.UploadCtxProvider
-  >(null);
+  const [uploadedFiles, setUploadedFiles] = useState<OutputFileEntry<'success'>[]>([]);
+  const ctxProviderRef = useRef<InstanceType<UploadCtxProvider>>(null);
 
   const handleRemoveClick = useCallback(
     (uuid: OutputFileEntry["uuid"]) =>
@@ -26,60 +24,21 @@ const FileUploader: React.FunctionComponent<IFileUploaderProps> = ({
     [fileEntry.files, onChange]
   );
 
-  useEffect(() => {
-    const handleUploadEvent = (e: CustomEvent<OutputFileEntry[]>) => {
-      if (e.detail) {
-        console.log("The uploaded file event is ; ", e);
-        setUploadedFiles([...e.detail]);
-      }
-    };
-    ctxProviderRef.current?.addEventListener("data-output", handleUploadEvent);
-    return () => {
-      ctxProviderRef.current?.removeEventListener(
-        "data-output",
-        handleUploadEvent
-      );
-    };
-  }, [setUploadedFiles]);
 
-  useEffect(() => {
-    const resetUploaderState = () =>
-      ctxProviderRef.current?.uploadCollection.clearAll();
+  const handleChangeEvent = (items) => {
+    console.log("The uploade event is",items.allEntries);
+    setUploadedFiles([...items.allEntries.filter((file) => file.status === 'success')]);
+  };
 
-    const handleDoneFlow = () => {
-      resetUploaderState();
-
-      onChange({ files: [...uploadedFiles] });
-      setUploadedFiles([]);
-    };
-
-    ctxProviderRef.current?.addEventListener("done-flow", handleDoneFlow);
-
-    return () => {
-      ctxProviderRef.current?.removeEventListener("done-flow", handleDoneFlow);
-    };
-  }, [fileEntry, onChange, uploadedFiles, setUploadedFiles]);
+  console.log(uploadedFiles);
 
   return (
     <div>
-      <lr-config
-        ctx-name="my-uploader"
-        pubkey="f0c429166137f8545923"
-        multiple={true}
-        confirmUpload={false}
-        removeCopyright={true}
-        imgOnly={true}
-      ></lr-config>
-
-      <lr-file-uploader-regular
-        ctx-name="my-uploader"
-        css-src={blocksStyles}
-      ></lr-file-uploader-regular>
-
-      <lr-upload-ctx-provider ctx-name="my-uploader" ref={ctxProviderRef} />
+      <FileUploaderRegular onChange={handleChangeEvent} pubkey="f0c429166137f8545923" apiRef={ctxProviderRef} />
 
       <div className="grid grid-cols-2 gap-4 mt-8">
-        {fileEntry.files.map((file) => (
+        {uploadedFiles.map((file) => (
+          
           <div key={file.uuid} className="relative">
             <img
               key={file.uuid}
