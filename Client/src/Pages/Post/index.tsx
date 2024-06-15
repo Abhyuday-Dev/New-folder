@@ -4,8 +4,10 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useUserAuth } from "@/context/userauthContext";
-import { FileEntry, post } from "@/types";
+import { createPost } from "@/repository/post.service";
+import { FileEntry, PhotoMeta, post } from "@/types";
 import * as React from "react";
+import { useNavigate } from "react-router-dom";
 
 interface IPostProps {}
 
@@ -15,7 +17,9 @@ const Post: React.FunctionComponent<IPostProps> = (props) => {
     files: [],
   });
 
-  const [post, setPost] = React.useState<post>({
+  const navigate=useNavigate();
+
+  const [npost, setPost] = React.useState<post>({
     caption: "",
     photos: [],
     likes: 0,
@@ -26,9 +30,28 @@ const Post: React.FunctionComponent<IPostProps> = (props) => {
 
   const handleSubmit=async(e:React.MouseEvent<HTMLFormElement>)=>{
     e.preventDefault();
-    console.log("uploaded file entry: ",fileEntry);
-    console.log("created post: ",post);
+    console.log("uploaded file entry: ",fileEntry.files);
+    console.log("created post: ",npost);
+
+    const photoMeta:PhotoMeta[]=fileEntry.files.map((file)=>{
+      return {cdnUrl:file.cdnUrl,uuid:file.uuid};
+    });
+
+    if(user!==null){
+      const newPost:post={
+        ...npost,
+        userId: user?.uid || null,
+        photos: photoMeta,
+      }
+      console.log(newPost);
+      await createPost(newPost);
+      navigate("/")
+    }else{
+      navigate("/login");
+    }
   }
+
+
   return (
     <Layout>
       <div className="flex justify-center">
@@ -46,9 +69,9 @@ const Post: React.FunctionComponent<IPostProps> = (props) => {
                   className="mb-8"
                   id="caption"
                   placeholder="What's in your photo?"
-                  value={post.caption}
+                  value={npost.caption}
                   onChange={(e) => {
-                    setPost({ ...post, caption: e.target.value });
+                    setPost({ ...npost, caption: e.target.value });
                   }}
                 ></Textarea>
               </div>
