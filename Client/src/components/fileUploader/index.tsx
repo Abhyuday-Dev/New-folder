@@ -1,4 +1,4 @@
-import { useState, useRef, useCallback, useEffect } from "react";
+import { useState, useRef, useCallback} from "react";
 import { OutputFileEntry } from "@uploadcare/blocks";
 import { FileEntry } from "@/types";
 import {
@@ -10,11 +10,13 @@ import "@uploadcare/react-uploader/core.css";
 interface IFileUploaderProps {
   fileEntry: FileEntry;
   onChange: (fileEntry: FileEntry) => void;
+  preview:boolean;
 }
 
 const FileUploader: React.FunctionComponent<IFileUploaderProps> = ({
   fileEntry,
   onChange,
+  preview
 }) => {
   const [uploadedFiles, setUploadedFiles] = useState<
     OutputFileEntry<"success">[]
@@ -27,10 +29,10 @@ const FileUploader: React.FunctionComponent<IFileUploaderProps> = ({
     [fileEntry.files, onChange]
   );
 
-  const handleChangeEvent = (items) => {
+  const handleChangeEvent = (items:any) => {
     console.log("The uploade event is", items.allEntries);
     setUploadedFiles([
-      ...items.allEntries.filter((file) => file.status === "success"),
+      ...items.allEntries.filter((file:any) => file.status === "success"),
     ]);
   };
 
@@ -53,13 +55,13 @@ const FileUploader: React.FunctionComponent<IFileUploaderProps> = ({
         onChange={handleChangeEvent}
         onModalClose={handleModalCloseEvent}
         imgOnly
-        multiple
+        multiple={preview}
         removeCopyright
         pubkey="f0c429166137f8545923"
         apiRef={ctxProviderRef}
       />
 
-      <div className="grid grid-cols-2 gap-4 mt-8">
+      {preview? <div className="grid grid-cols-2 gap-4 mt-8">
         {fileEntry.files.map((file) => (
           <div key={file.uuid} className="relative">
             <img
@@ -79,7 +81,7 @@ const FileUploader: React.FunctionComponent<IFileUploaderProps> = ({
             </div>
           </div>
         ))}
-      </div>
+      </div>:<></>}
     </div>
   );
 };

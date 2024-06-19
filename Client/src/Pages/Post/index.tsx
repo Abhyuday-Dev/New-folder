@@ -11,7 +11,7 @@ import { useNavigate } from "react-router-dom";
 
 interface IPostProps {}
 
-const Post: React.FunctionComponent<IPostProps> = (props) => {
+const Post: React.FunctionComponent<IPostProps> = () => {
   const { user } = useUserAuth();
   const [fileEntry, setFileEntry] = React.useState<FileEntry>({
     files: [],
@@ -23,8 +23,10 @@ const Post: React.FunctionComponent<IPostProps> = (props) => {
     caption: "",
     photos: [],
     likes: 0,
-    userlikes: [],
+    userlikes:[],
     userId: null,
+    username: null,
+    photoURL: null,
     date: new Date(),
   });
 
@@ -33,15 +35,18 @@ const Post: React.FunctionComponent<IPostProps> = (props) => {
     console.log("uploaded file entry: ",fileEntry.files);
     console.log("created post: ",npost);
 
-    const photoMeta:PhotoMeta[]=fileEntry.files.map((file)=>{
-      return {cdnUrl:file.cdnUrl,uuid:file.uuid};
-    });
+    const photoMeta: PhotoMeta[] = fileEntry.files.map((file) => ({
+      cdnUrl: file.cdnUrl ?? "",
+      uuid: file.uuid ?? "",
+    }));
 
     if(user!==null){
       const newPost:post={
         ...npost,
         userId: user?.uid || null,
         photos: photoMeta,
+        username:user.displayName,
+        photoURL:user.photoURL
       }
       console.log(newPost);
       await createPost(newPost);
@@ -80,7 +85,7 @@ const Post: React.FunctionComponent<IPostProps> = (props) => {
                   Photos
                 </Label>
               </div>
-              <FileUploader fileEntry={fileEntry} onChange={setFileEntry} />
+              <FileUploader fileEntry={fileEntry} onChange={setFileEntry} preview={true} />
               <Button className="mt-8 w-36" type="submit">
                 Post
               </Button>

@@ -6,9 +6,11 @@ import {
     signInWithEmailAndPassword,
     signInWithPopup,
     signOut,
+    updateProfile,
   } from "firebase/auth";
   import { createContext, useContext, useEffect, useState } from "react";
   import { auth } from "../firebaseConfig";
+import { ProfileInfo } from "@/types";
   
   interface IUserAuthProviderProps {
     children: React.ReactNode;
@@ -20,6 +22,7 @@ import {
     signUp: typeof signUp;
     logOut: typeof logOut;
     googleSignIn: typeof googleSignIn;
+    updateProfileInfo:typeof updateProfileInfo;
   };
   
   const logIn = (email: string, password: string) => {
@@ -38,6 +41,14 @@ import {
     const googleAuthProvider = new GoogleAuthProvider();
     return signInWithPopup(auth, googleAuthProvider);
   };
+
+  const updateProfileInfo=(profileInfo:ProfileInfo)=>{
+    console.log("the useer profile info is: " + profileInfo);
+    return updateProfile(profileInfo.user!,{
+      displayName: profileInfo.displayName,
+      photoURL: profileInfo.photoURL,
+    });
+  }
   
   export const userAuthContext = createContext<AuthContextData>({
     user: null,
@@ -45,6 +56,7 @@ import {
     signUp,
     logOut,
     googleSignIn,
+    updateProfileInfo
   });
   
   export const UserAuthProvider: React.FunctionComponent<
@@ -71,6 +83,7 @@ import {
       signUp,
       logOut,
       googleSignIn,
+      updateProfileInfo
     };
     return (
       <userAuthContext.Provider value={value}>

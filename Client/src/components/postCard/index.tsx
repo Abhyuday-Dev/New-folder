@@ -1,7 +1,6 @@
 import { useUserAuth } from "@/context/userauthContext";
 import { DocumentResponse } from "@/types";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "../ui/card";
-import image1 from "@/assets/images/image1.jpg";
 import { HeartIcon, MessageCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
 import React from "react";
@@ -17,16 +16,16 @@ const PostCard: React.FunctionComponent<IPostCardProps> = ({ data }) => {
     likes: number;
     isLike: boolean;
   }>({
-    likes: data.likes,
-    isLike: data.userlikes.includes(user?.uid) ? true : false,
+    likes: data.likes!,
+    isLike: data.userlikes?.includes(user!?.uid) ? true : false,
   });
 
   const updateLike = async (isVal: boolean) => {
     try {
       const newLikesCount = isVal ? likesInfo.likes + 1 : likesInfo.likes - 1;
       const updatedUserLikes = isVal
-        ? [...data.userlikes, user!.uid]
-        : data.userlikes.filter(uid => uid !== user!.uid);
+        ? [...data.userlikes!, user!.uid]
+        : data.userlikes!.filter(uid => uid !== user!.uid);
 
       setlikesInfo({
         likes: newLikesCount,
@@ -47,12 +46,12 @@ const PostCard: React.FunctionComponent<IPostCardProps> = ({ data }) => {
         <CardTitle className="text-sm text-center flex justify-start items-center">
           <span className="mr-2">
             <img
-              src={image1}
+              src={data.photoURL!}
               alt=""
               className="w-10 h-10 rounded-full border-2 border-slate-800 object-cover"
             />
           </span>
-          <span>Guest</span>
+          <span>{data.username}</span>
         </CardTitle>
       </CardHeader>
       <CardContent className="p-0">
@@ -72,7 +71,7 @@ const PostCard: React.FunctionComponent<IPostCardProps> = ({ data }) => {
         </div>
         <div className="w-full text-sm">{likesInfo.likes} likes</div>
         <div className="w-full text-sm">
-          <span>Guest</span>: {data.caption}
+          <span>{data.username}</span>: {data.caption}
         </div>
       </CardFooter>
     </Card>

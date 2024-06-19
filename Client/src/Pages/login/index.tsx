@@ -29,7 +29,7 @@ interface ILoginProps {}
 
 
 
-const Login: React.FunctionComponent<ILoginProps> = (props) => {
+const Login: React.FunctionComponent<ILoginProps> = () => {
 
   const { googleSignIn, logIn } = useUserAuth();
   const navigate = useNavigate();

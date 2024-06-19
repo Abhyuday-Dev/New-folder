@@ -1,6 +1,17 @@
 import { db } from "@/firebaseConfig";
-import { DocumentResponse, post } from "@/types";
-import { collection, addDoc, getDocs, query, orderBy, where, getDoc, deleteDoc, updateDoc, doc } from "firebase/firestore";
+import { DocumentResponse, ProfileInfo, post } from "@/types";
+import {
+  collection,
+  addDoc,
+  getDocs,
+  query,
+  orderBy,
+  where,
+  getDoc,
+  deleteDoc,
+  updateDoc,
+  doc,
+} from "firebase/firestore";
 
 const COLLECTION_NAME = "posts";
 
@@ -41,16 +52,41 @@ export const deletePost = (id: string) => {
   return deleteDoc(doc(db, COLLECTION_NAME, id));
 };
 
-export const updateLikesonPost = async (id: string, userlikes: string[], likes: number) => {
+export const updateLikesonPost = async (
+  id: string,
+  userlikes: string[],
+  likes: number
+) => {
   const docRef = doc(db, COLLECTION_NAME, id);
   try {
     await updateDoc(docRef, {
       likes: likes,
       userlikes: userlikes,
     });
-    console.log(`Likes updated successfully: ${likes} likes, UserLikes: ${userlikes}`);
+    console.log(
+      `Likes updated successfully: ${likes} likes, UserLikes: ${userlikes}`
+    );
   } catch (error) {
     console.error("Error updating likes:", error);
-    throw error;  // Re-throw the error to handle it in the caller function
+    throw error; // Re-throw the error to handle it in the caller function
+  }
+};
+
+export const updateUserInfoOnPost = async (profileInfo: ProfileInfo) => {
+  const q = query(
+    collection(db, COLLECTION_NAME),
+    where("userId", "==", profileInfo.user?.uid)
+  );
+  const querySnapShot = await getDocs(q);
+  if (querySnapShot.size > 0) {
+    querySnapShot.forEach((document) => {
+      const docRef = doc(db, COLLECTION_NAME, document.id);
+      updateDoc(docRef, {
+        username: profileInfo.displayName,
+        photoURL: profileInfo.photoURL,
+      });
+    });
+  } else {
+    console.log("No snapshots found");
   }
 };
