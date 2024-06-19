@@ -79,7 +79,7 @@ const Signup: React.FunctionComponent<ISignupProps> = () => {
               <form onSubmit={handleSubmit}>
                 <CardHeader className="space-y-1">
                   <CardTitle className="text-2xl text-center mb-4">
-                    PhotoGram
+                    PicsaGram
                   </CardTitle>
                   <CardDescription>
                     Enter your email below to create your account
